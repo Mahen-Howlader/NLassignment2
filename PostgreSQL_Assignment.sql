@@ -1,13 +1,13 @@
 -- Active: 1747608045198@@127.0.0.1@5432@conservation_db@public
 
--- rangers tabel 
+-- rangers tabel
 CREATE TABLE rangers (
     ranger_id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     region VARCHAR(100) NOT NULL
 );
 
--- species table 
+-- species table
 CREATE TABLE species (
     species_id SERIAL PRIMARY KEY,
     common_name VARCHAR(50) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE species (
     conservation_status VARCHAR(100)
 );
 
--- sightings tabel 
+-- sightings tabel
 CREATE TABLE sightings (
     sighting_id SERIAL PRIMARY KEY,
     species_id INT NOT NULL REFERENCES species (species_id) ON DELETE CASCADE,
@@ -39,8 +39,7 @@ VALUES (
         'Mountain Range'
     );
 
-
--- - species table  insert value 
+-- - species table  insert value
 INSERT INTO
     species (
         common_name,
@@ -73,7 +72,7 @@ VALUES (
         'Endangered'
     );
 
--- sightings tabel insert value  
+-- sightings tabel insert value
 INSERT INTO
     sightings (
         species_id,
@@ -113,15 +112,38 @@ VALUES (
 
 SELECT * FROM rangers;
 
+-- DROP TABLE rangers;
+
+-- DROP TABLE species;
+
+-- DROP TABLE sightings;
+
 SELECT * FROM species;
 
 SELECT * FROM sightings;
 
+--  DROP TABLE sightings;
 
+-- problem 1
+INSERT INTO
+    rangers (name, region)
+VALUES ('Derek Fox', 'Coastal Plains');
 
--- problem 1 
-INSERT INTO rangers (name,region) VALUES 
-('Derek Fox', 'Coastal Plains');
+-- problem 2
+SELECT count(DISTINCT species_id) as unique_species_count
+FROM sightings;
 
+-- problem 3
+SELECT * FROM sightings WHERE location ILIKE '%pass%';
 
--- problem 2 
+-- problem 4
+SELECT R.name, count(S.ranger_id) AS counts
+FROM rangers R
+    LEFT JOIN sightings S ON R.ranger_id = S.ranger_id
+GROUP BY
+    R.name
+HAVING
+    count(S.ranger_id) > 0
+ORDER BY R.name ASC;
+
+-- problem 5
