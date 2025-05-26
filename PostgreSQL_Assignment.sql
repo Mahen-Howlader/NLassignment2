@@ -110,19 +110,8 @@ VALUES (
         NULL
     );
 
-SELECT * FROM rangers;
 
--- DROP TABLE rangers;
 
--- DROP TABLE species;
-
--- DROP TABLE sightings;
-
-SELECT * FROM species;
-
-SELECT * FROM sightings;
-
---  DROP TABLE sightings;
 
 -- problem 1
 INSERT INTO
@@ -146,4 +135,24 @@ HAVING
     count(S.ranger_id) > 0
 ORDER BY R.name ASC;
 
+
+
 -- problem 5
+SELECT SP.common_name
+FROM species SP
+LEFT JOIN sightings SI ON SP.species_id = SI.species_id WHERE SI.species_id IS NULL;
+
+
+
+
+
+-- problem 6 
+SELECT SP.common_name,SI.sighting_time,R.name 
+FROM sightings SI 
+JOIN species SP ON SI.species_id = SP.species_id 
+JOIN rangers R ON SI.ranger_id = R.ranger_id 
+ORDER BY SI.sighting_time DESC 
+LIMIT 2;
+
+
+-- problem 7 
