@@ -22,7 +22,7 @@ CREATE TABLE sightings (
     species_id INT NOT NULL REFERENCES species (species_id) ON DELETE CASCADE,
     ranger_id INT NOT NULL REFERENCES rangers (ranger_id) ON DELETE CASCADE,
     "location" VARCHAR(50) NOT NULL,
-    sighting_time DATE NOT NULL,
+    sighting_time TIMESTAMP NOT NULL,
     notes TEXT
 );
 
@@ -110,8 +110,7 @@ VALUES (
         NULL
     );
 
-
-
+DROP Table sightings;
 
 -- problem 1
 INSERT INTO
@@ -135,24 +134,50 @@ HAVING
     count(S.ranger_id) > 0
 ORDER BY R.name ASC;
 
-
-
 -- problem 5
 SELECT SP.common_name
 FROM species SP
-LEFT JOIN sightings SI ON SP.species_id = SI.species_id WHERE SI.species_id IS NULL;
+    LEFT JOIN sightings SI ON SP.species_id = SI.species_id
+WHERE
+    SI.species_id IS NULL;
 
-
-
-
-
--- problem 6 
-SELECT SP.common_name,SI.sighting_time,R.name 
-FROM sightings SI 
-JOIN species SP ON SI.species_id = SP.species_id 
-JOIN rangers R ON SI.ranger_id = R.ranger_id 
-ORDER BY SI.sighting_time DESC 
+-- problem 6
+SELECT SP.common_name, SI.sighting_time, R.name
+FROM
+    sightings SI
+    JOIN species SP ON SI.species_id = SP.species_id
+    JOIN rangers R ON SI.ranger_id = R.ranger_id
+ORDER BY SI.sighting_time DESC
 LIMIT 2;
 
+-- problem 7
+UPDATE species
+set
+    conservation_status = 'Historic'
+WHERE
+    EXTRACT(
+        YEAR
+        FROM species.discovery_date
+    ) < 1800;
 
--- problem 7 
+
+
+-- problem 8
+SELECT
+    sighting_id,
+    sighting_time,
+    CASE
+        WHEN EXTRACT(
+            HOUR
+            FROM sighting_time
+        ) < 12 THEN 'Morning'
+        WHEN EXTRACT(
+            HOUR
+            FROM sighting_time
+        ) BETWEEN 12 AND 17  THEN 'Afternoon'
+        ELSE 'Evening'
+    END as date_of_time
+FROM sightings;
+
+-- problem 9 
+DELETE FROM rangers WHERE ranger_id NOT IN (SELECT DISTINCT ranger_id FROM sightings);
